@@ -34,12 +34,12 @@ def getStockPrices(ticker, attemptNum):
 	resp = requests.get("https://api.polygon.io/v2/aggs/ticker/%s/range/1/hour/%s/%s?adjusted=true&sort=desc&limit=1000&apiKey=%s" % (ticker, dateFromDatetime(beforeToday), dateFromDatetime(today), apiKey))
 	try:
 		results = json.loads(resp.content)["results"]
-		newestValue = results[0]["v"]
+		newestValue = results[0]["c"]
 		currentDay = datetime.fromtimestamp(results[0]["t"]/1000).day
 		previousValue = None
 		for entry in results:
 			if datetime.fromtimestamp(entry["t"]/1000).day != currentDay:
-				previousValue = entry["v"]
+				previousValue = entry["c"]
 				break
 		if previousValue is None:
 			raise Exception("Previous value doesn't exist!?")
@@ -72,4 +72,4 @@ def showTickerMetadata():
 	return json.dumps({"rating": averageRating, "newestValue": newestValue, "previousValue": previousValue})
 
 if __name__ == "__main__":
-	app.run()
+	app.run(host='0.0.0.0',port=5000)
